@@ -2,9 +2,7 @@ import React from 'react'
 import Head from 'next/head'
 import Nav from '../components/nav'
 
-
-import fetch from "isomorphic-unfetch";
-import ky from "ky";
+import ky from "ky-universal";
 
 const Home = ({facts}) => (
   <div>
@@ -14,7 +12,6 @@ const Home = ({facts}) => (
     </Head>
 
     <Nav />
-
     <div className="hero">
       <h1 className="title">Welcome to Next.js!</h1>
       <p className="description">
@@ -40,7 +37,7 @@ const Home = ({facts}) => (
       </div>
       <div>
         {
-          facts.map(fact => (<p key={fact._id}>{fact.text}</p>))
+          facts && facts.map(fact => (<p key={fact._id}>{fact.text}</p>))
         }
       </div>
     </div>
@@ -95,11 +92,9 @@ const Home = ({facts}) => (
 )
 
 Home.getInitialProps = async ({ req }) => {
-  const res = await ky.get("https://cat-fact.herokuapp.com/facts").json();
-  // const json = await res.json();
-  
-  console.log(res);
+  const res = await ky("https://cat-fact.herokuapp.com/facts");
+  const json = await res.json();
 
-  return {facts: res.all}
+  return {facts: json.all}
 }
 export default Home
