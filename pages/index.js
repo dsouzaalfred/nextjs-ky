@@ -2,7 +2,11 @@ import React from 'react'
 import Head from 'next/head'
 import Nav from '../components/nav'
 
-const Home = () => (
+
+import fetch from "isomorphic-unfetch";
+import ky from "ky";
+
+const Home = ({facts}) => (
   <div>
     <Head>
       <title>Home</title>
@@ -33,6 +37,11 @@ const Home = () => (
           <h3>Examples &rarr;</h3>
           <p>Find other example boilerplates on the Next.js GitHub.</p>
         </a>
+      </div>
+      <div>
+        {
+          facts.map(fact => (<p key={fact._id}>{fact.text}</p>))
+        }
       </div>
     </div>
 
@@ -85,4 +94,12 @@ const Home = () => (
   </div>
 )
 
+Home.getInitialProps = async ({ req }) => {
+  const res = await ky.get("https://cat-fact.herokuapp.com/facts").json();
+  // const json = await res.json();
+  
+  console.log(res);
+
+  return {facts: res.all}
+}
 export default Home
